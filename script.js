@@ -1,19 +1,6 @@
-import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { auth, db } from "./firebase.js";
-
-import { collection, getDocs } from
+import { doc, getDoc, setDoc } from
 "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-
-const snap = await getDocs(collection(db, "users"));
-
-snap.forEach(doc => {
-  console.log(doc.id, doc.data().progress);
-});
-
-
-const ADMIN_UID = "zPuzBifNNAgtRGq1MMth6sUl4SC2";
-
+import { auth, db } from "./firebase.js";
 
 let count = 0;
 const countEl = document.getElementById("count");
