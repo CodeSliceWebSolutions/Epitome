@@ -154,12 +154,33 @@ Speech feels calm and structured
 
 	<pre id="output">Waiting...</pre>
 	<h1>Reading Progress</h1>
+	<!-- LESSON CONTENT (THIS IS WHAT GETS REPLACED) -->
+	<div id="lessonContent">
+		<h1>STEP 1 — Shift Attention Away from Self</h1>
+		<p>
+		Before engaging, say internally:
+		“This person is more interesting than my thoughts about myself.”
+		Then direct attention outward.
+		</p>
+	</div>
 
-	<p>Times read:</p>
-	<h2 id="count">0</h2>
+	<!-- DYNAMIC MESSAGE FROM FIREBASE PROGRESS -->
+	<h2 id="lessonMessage"></h2>
 
+	<!-- PROGRESS COUNTER -->
+	<h2>Times read: <span id="count">0</span></h2>
+
+	<!-- ACTION BUTTON -->
 	<button id="readBtn">I have read this</button>
-	<button id="resetBtn">Reset Progress</button>
-	<script type="module" src="script.js"></script>
+
+	<!-- SCRIPT (MUST BE LAST) -->
+  	<script type="module" src="script.js"></script>
+	
+
+  
 </body>
 </html>
+
+
+
+
