@@ -1,4 +1,41 @@
+/* ===== RESET ===== */
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
 body {
+    min-height: 100vh;
     background: radial-gradient(circle at top, #08182e,#000);
     color: #eaf6ff;
+    justify-content: center;
+    align-items: center;
 }
+
+
+
+.quest-card {
+    width: 360px;
+    padding: 22px 20px 28px;
+    background: linear-gradient(160deg, #0b3a66, #07223d) ;
+    border-radius: 14px;
+    box-shadow: 
+        0 0 35px rgba(0,180,255,0.55),
+        inset 0 0 20px rgba(0,200,255,0.18);
+    position: relative;
+}
+
+.quest-card::before {
+    content: "";
+    position: absolute;
+    inset: -8px;
+    border: 2px solid rgba(120,220,255,0.45);
+    border-radius: 18px;
+}
+
+.use-to-center{
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
