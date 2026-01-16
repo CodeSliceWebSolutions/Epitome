@@ -2,19 +2,8 @@
 import { doc, getDoc, setDoc } from
   "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// 🔹 Firebase config (already working in your project)
+// 🔹 Firebase config
 import { auth, db } from "./firebase.js";
-
-// ----------------------------
-// LOCAL LESSON MESSAGES
-// ----------------------------
-const lessonMessages = {
-  0: "message 1.",
-  1: "Gmessage 2.",
-  2: "N3.",
-  3: "St4.",
-  4: "Lemessage 5."
-};
 
 let count = 0;
 
@@ -22,25 +11,19 @@ let count = 0;
 // DOM ELEMENTS
 // ----------------------------
 const countEl = document.getElementById("count");
-const messageEl = document.getElementById("lessonMessage");
 const lessonContentEl = document.getElementById("lessonContent");
 const readBtn = document.getElementById("readBtn");
 
-// ----------------------------
-// RENDER LOCAL LESSON MESSAGE
-// ----------------------------
-function renderLesson(count) {
-  if (count >= 4) {
-    messageEl.textContent = lessonMessages[4];
-    readBtn.disabled = true;
+// MODAL ELEMENTS
+const modal = document.getElementById("confirmModal");
+const confirmYes = document.getElementById("confirmYes");
+const confirmNo = document.getElementById("confirmNo");
 
-    lessonContentEl.innerHTML = `
-      <h1>Progress Complete</h1>
-      <p>You have completed this lesson.</p>
-    `;
-  } else {
-    messageEl.textContent = lessonMessages[count];
-  }
+// ----------------------------
+// HELPERS
+// ----------------------------
+function getTaskIdFromProgress(progress) {
+  return `task_${String(progress + 1).padStart(3, "0")}`;
 }
 
 // ----------------------------
@@ -49,28 +32,28 @@ function renderLesson(count) {
 async function loadTask(taskId) {
   try {
     const taskRef = doc(db, "tasks", taskId);
-    const taskSnap = await getDoc(taskRef);
+    const snap = await getDoc(taskRef);
 
-    if (!taskSnap.exists()) {
+    if (!snap.exists()) {
       lessonContentEl.innerHTML = "<p>Task not found.</p>";
       return;
     }
 
-    const task = taskSnap.data();
+    const task = snap.data();
 
     lessonContentEl.innerHTML = `
       <h1>${task.title}</h1>
       <p>${task.description}</p>
       <small>XP Reward: ${task.xp}</small>
     `;
-  } catch (error) {
-    console.error("Error loading task:", error);
+  } catch (err) {
     lessonContentEl.innerHTML = "<p>Error loading task.</p>";
+    console.error(err);
   }
 }
 
 // ----------------------------
-// AUTH STATE LISTENER
+// AUTH STATE
 // ----------------------------
 auth.onAuthStateChanged(async user => {
   if (!user) return;
@@ -81,33 +64,45 @@ auth.onAuthStateChanged(async user => {
   if (snap.exists()) {
     count = snap.data().progress?.lesson1 || 0;
   } else {
-    await setDoc(userRef, {
-      progress: { lesson1: 0 }
-    });
+    await setDoc(userRef, { progress: { lesson1: 0 } });
     count = 0;
   }
 
   countEl.textContent = count;
-  renderLesson(count);
-
-  // 🔥 LOAD TASK FROM FIRESTORE
-  loadTask("task_001");
+  loadTask(getTaskIdFromProgress(count));
 });
 
 // ----------------------------
-// READ BUTTON CLICK
+// READ BUTTON → OPEN MODAL
 // ----------------------------
-readBtn.addEventListener("click", async () => {
+readBtn.addEventListener("click", () => {
+  modal.classList.remove("hidden");
+});
+
+// ----------------------------
+// CONFIRM YES → PROGRESS
+// ----------------------------
+confirmYes.addEventListener("click", async () => {
+  modal.classList.add("hidden");
+
   const user = auth.currentUser;
   if (!user) return;
 
   count++;
   countEl.textContent = count;
-  renderLesson(count);
 
   await setDoc(
     doc(db, "users", user.uid),
     { progress: { lesson1: count } },
     { merge: true }
   );
+
+  loadTask(getTaskIdFromProgress(count));
+});
+
+// ----------------------------
+// CONFIRM NO → CLOSE MODAL
+// ----------------------------
+confirmNo.addEventListener("click", () => {
+  modal.classList.add("hidden");
 });
